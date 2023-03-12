@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from 'react';
 
-export default function Calendar({ id, currentOpened, setCurrentOpened, nowDate }) {
+export default function Calendar({ id, currentOpened, setCurrentOpened, periodSelected, dateData, setDateData }) {
   const [date, setDate] = useState(new Date());
   const [calendarData, setCalendarData] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(nowDate);
+  const [selectedDate, setSelectedDate] = useState(new Date(periodSelected));
 
   const days = ['일', '월', '화', '수', '목', '금', '토'];
 
+  /**
+   * 달력에서 날짜 선택 시 이벤트
+   * @param {*} newSelected
+   */
   const handleClickSelectDate = (newSelected) => {
     if (selectedDate !== newSelected) {
       setSelectedDate(newSelected);
+      setDateData({ ...dateData, [id]: newSelected.toISOString() });
     }
     setCurrentOpened(null);
   };

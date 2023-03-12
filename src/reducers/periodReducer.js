@@ -3,8 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 export const periodSlice = createSlice({
   name: 'period',
   initialState: {
-    beginDate: new Date(),
-    endDate: new Date(),
+    beginDate: new Date().toISOString(),
+    endDate: new Date().toISOString(),
     beginTime: `${new Date().getHours()}:${Math.floor(new Date().getMinutes() / 10) * 10}`,
     endTime: `${new Date().getHours()}:${Math.floor(new Date().getMinutes() / 10) * 10}`,
   },

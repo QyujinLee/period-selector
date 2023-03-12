@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Time({ type, id, currentOpened, setCurrentOpened, nowDate }) {
+export default function Time({ type, id, currentOpened, setCurrentOpened, timeData, setTimeData, periodSelected }) {
   const hourArr = [
     { name: '오전 12시', value: 0 },
     { name: '오전 1시', value: 1 },
@@ -39,10 +39,10 @@ export default function Time({ type, id, currentOpened, setCurrentOpened, nowDat
 
   const [currentName, setCurrentName] = useState(
     type === 'hour'
-      ? hourArr.find((item) => item.value === nowDate.hour).name
-      : minuteArr.find((item) => item.value === nowDate.minute).name
+      ? hourArr.find((item) => item.value === periodSelected).name
+      : minuteArr.find((item) => item.value === periodSelected).name
   );
-  const [_, setCurrentValue] = useState(type === 'hour' ? nowDate.hour : nowDate.minute);
+  const [, setCurrentValue] = useState(periodSelected);
 
   /**
    * 옵션 클릭 시 이벤트
@@ -51,6 +51,9 @@ export default function Time({ type, id, currentOpened, setCurrentOpened, nowDat
   const handleClickOption = (option) => {
     setCurrentName(option.name);
     setCurrentValue(option.value);
+
+    setTimeData({ ...timeData, [id]: option.value });
+
     setCurrentOpened(null);
   };
 
