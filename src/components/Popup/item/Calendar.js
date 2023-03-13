@@ -186,8 +186,12 @@ export default function Calendar({ id, dateData, setDateData, currentOpened, set
               {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
             </p>
             <div className="month-btn__wrapper">
-              <button onClick={handlePrevMonth}>&lt;</button>
-              <button onClick={handleNextMonth}>&gt;</button>
+              <button onClick={handlePrevMonth}>
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <button onClick={handleNextMonth}>
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
             </div>
           </div>
           <div className="days-header">
