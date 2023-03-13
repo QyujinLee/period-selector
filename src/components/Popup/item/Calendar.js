@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
-export default function Calendar({ id, currentOpened, setCurrentOpened, periodSelected, dateData, setDateData }) {
-  const [date, setDate] = useState(new Date());
+export default function Calendar({ id, dateData, setDateData, currentOpened, setCurrentOpened, periodSelected }) {
+  // 달력에서 현재 선택된 월
+  const [currentDate, setCurrentDate] = useState(new Date());
+  // 달력 렌더링 데이터
   const [calendarData, setCalendarData] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date(periodSelected));
+  // 응시 시작일 & 응시 마감일
+  const { beginDate, endDate } = dateData;
 
   const days = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -12,10 +15,44 @@ export default function Calendar({ id, currentOpened, setCurrentOpened, periodSe
    * @param {*} newSelected
    */
   const handleClickSelectDate = (newSelected) => {
-    if (selectedDate !== newSelected) {
-      setSelectedDate(newSelected);
-      setDateData((prevData) => ({ ...prevData, [id]: newSelected.toISOString() }));
+    let newDate = newSelected;
+    let startDate = new Date(beginDate);
+    let finishDate = new Date(endDate);
+
+    newDate.setHours(0, 0, 0, 0);
+    startDate.setHours(0, 0, 0, 0);
+    finishDate.setHours(0, 0, 0, 0);
+
+    newDate = newDate.getTime();
+    startDate = startDate.getTime();
+    finishDate = finishDate.getTime();
+
+    if (startDate === finishDate) {
+      if (id === 'beginDate') {
+        if (newDate < startDate) {
+          setDateData((prevData) => ({ ...prevData, beginDate: newSelected.toISOString() }));
+        } else {
+          setDateData({ beginDate: newSelected.toISOString(), endDate: newSelected.toISOString() });
+        }
+      }
+
+      if (id === 'endDate') {
+        if (endDate < newDate) {
+          setDateData((prevData) => ({ ...prevData, endDate: newSelected.toISOString() }));
+        } else {
+          setDateData({ beginDate: newSelected.toISOString(), endDate: newSelected.toISOString() });
+        }
+      }
     }
+
+    if (startDate !== finishDate) {
+      if (startDate <= newDate && newDate <= finishDate) {
+        setDateData((prevData) => ({ ...prevData, endDate: newSelected.toISOString() }));
+      } else {
+        setDateData({ beginDate: newSelected.toISOString(), endDate: newSelected.toISOString() });
+      }
+    }
+
     setCurrentOpened(null);
   };
 
@@ -23,15 +60,15 @@ export default function Calendar({ id, currentOpened, setCurrentOpened, periodSe
    * 달력 그리기
    */
   const renderCalendar = () => {
-    const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-    const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-    const prevMonthLastDay = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
-    const nextMonthFirstDay = new Date(date.getFullYear(), date.getMonth() + 1, 1).getDay();
+    const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+    const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+    const prevMonthLastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+    const nextMonthFirstDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1).getDay();
 
     // 이전 달의 날짜들
     const prevDays = [];
     for (let i = firstDay - 1; i >= 0; i--) {
-      const day = new Date(date.getFullYear(), date.getMonth() - 1, prevMonthLastDay - i);
+      const day = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, prevMonthLastDay - i);
       prevDays.push(
         <div key={`prev-${day}`} className="day prev-month">
           {prevMonthLastDay - i}
@@ -42,13 +79,19 @@ export default function Calendar({ id, currentOpened, setCurrentOpened, periodSe
     // 현재 선택된 달의 날짜들
     const currentDays = [];
     for (let i = 1; i <= lastDay; i++) {
-      const day = new Date(date.getFullYear(), date.getMonth(), i);
-      const currentDateStr = `${day.getFullYear()}-${day.getMonth()}-${i}`;
-      const selectedDateStr = `${selectedDate.getFullYear()}-${selectedDate.getMonth()}-${selectedDate.getDate()}`;
+      let day = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
+      let startDate = new Date(beginDate);
+      let finishDate = new Date(endDate);
+
+      day.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
+      finishDate.setHours(0, 0, 0, 0);
+
+      const isSelect = startDate.getTime() <= day.getTime() && day.getTime() <= finishDate.getTime();
       currentDays.push(
         <div
           key={`current-${day}`}
-          className={`day current-month ${currentDateStr === selectedDateStr && 'selected'}`}
+          className={`day current-month ${isSelect && 'selected'}`}
           onClick={() => {
             handleClickSelectDate(day);
           }}
@@ -61,7 +104,7 @@ export default function Calendar({ id, currentOpened, setCurrentOpened, periodSe
     // 다음 달의 날짜들
     const nextDays = [];
     for (let i = 1; i <= 7 - nextMonthFirstDay; i++) {
-      const day = new Date(date.getFullYear(), date.getMonth() + 1, i);
+      const day = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, i);
       nextDays.push(
         <div key={`next-${day}`} className="day next-month">
           {i}
@@ -103,19 +146,19 @@ export default function Calendar({ id, currentOpened, setCurrentOpened, periodSe
    * 이전 달로 이동
    */
   const handlePrevMonth = () => {
-    setDate(new Date(date.getFullYear(), date.getMonth() - 1, 1));
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
   };
 
   /**
    * 다음달로 이동
    */
   const handleNextMonth = () => {
-    setDate(new Date(date.getFullYear(), date.getMonth() + 1, 1));
+    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
   };
 
   useEffect(() => {
     renderCalendar();
-  }, [date, selectedDate]);
+  }, [currentDate, beginDate, endDate]);
 
   /**
    * 날짜 선택 클릭 시 이벤트
@@ -132,13 +175,18 @@ export default function Calendar({ id, currentOpened, setCurrentOpened, periodSe
   return (
     <div className="calendar__wrapper">
       <button className="calendar__select" onClick={() => handleClickOpenCalendar(id)}>
-        {`${selectedDate.getFullYear()}년 ${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일`}
+        {id === 'beginDate' &&
+          `${new Date(beginDate).getFullYear()}년 ${new Date(beginDate).getMonth() + 1}월 ${new Date(
+            beginDate
+          ).getDate()}일`}
+        {id === 'endDate' &&
+          `${new Date(endDate).getFullYear()}년 ${new Date(endDate).getMonth() + 1}월 ${new Date(endDate).getDate()}일`}
       </button>
       {currentOpened === id && (
         <div className="calendar">
           <div className="header">
             <p>
-              {date.getFullYear()}년 {date.getMonth() + 1}월
+              {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
             </p>
             <div className="month-btn__wrapper">
               <button onClick={handlePrevMonth}>&lt;</button>

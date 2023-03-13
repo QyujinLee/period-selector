@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Time({ type, id, currentOpened, setCurrentOpened, timeData, setTimeData, periodSelected }) {
+export default function Time({ type, id, currentOpened, setCurrentOpened, setTimeData, periodSelected }) {
   const hourArr = [
     { name: '오전 12시', value: 0 },
     { name: '오전 1시', value: 1 },

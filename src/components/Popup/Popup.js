@@ -75,7 +75,6 @@ export default function Popup({ setIsShowPopup }) {
               id="beginHour"
               currentOpened={currentOpened}
               setCurrentOpened={setCurrentOpened}
-              timeData={timeData}
               setTimeData={setTimeData}
               periodSelected={Number(beginTime.split(':')[0])}
             />
@@ -84,7 +83,6 @@ export default function Popup({ setIsShowPopup }) {
               id="beginMinute"
               currentOpened={currentOpened}
               setCurrentOpened={setCurrentOpened}
-              timeData={timeData}
               setTimeData={setTimeData}
               periodSelected={Number(beginTime.split(':')[1])}
             />
@@ -106,7 +104,6 @@ export default function Popup({ setIsShowPopup }) {
               id="endHour"
               currentOpened={currentOpened}
               setCurrentOpened={setCurrentOpened}
-              timeData={timeData}
               setTimeData={setTimeData}
               periodSelected={Number(endTime.split(':')[0])}
             />
@@ -115,7 +112,6 @@ export default function Popup({ setIsShowPopup }) {
               id="endMinute"
               currentOpened={currentOpened}
               setCurrentOpened={setCurrentOpened}
-              timeData={timeData}
               setTimeData={setTimeData}
               periodSelected={Number(endTime.split(':')[1])}
             />
