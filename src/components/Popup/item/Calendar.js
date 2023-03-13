@@ -187,10 +187,10 @@ export default function Calendar({ id, dateData, setDateData, currentOpened, set
             </p>
             <div className="month-btn__wrapper">
               <button onClick={handlePrevMonth}>
-                <i class="fa-solid fa-chevron-left"></i>
+                <i className="fa-solid fa-chevron-left"></i>
               </button>
               <button onClick={handleNextMonth}>
-                <i class="fa-solid fa-chevron-right"></i>
+                <i className="fa-solid fa-chevron-right"></i>
               </button>
             </div>
           </div>
