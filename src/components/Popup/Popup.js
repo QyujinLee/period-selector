@@ -6,6 +6,7 @@ import Time from './item/Time';
 
 export default function Popup({ setIsShowPopup }) {
   const { beginDate, endDate, beginTime, endTime } = useSelector((state) => state.period);
+  const [currentOpened, setCurrentOpened] = useState(null);
   const [dateData, setDateData] = useState({ beginDate, endDate });
   const [timeData, setTimeData] = useState({
     beginHour: Number(beginTime.split(':')[0]),
@@ -51,8 +52,6 @@ export default function Popup({ setIsShowPopup }) {
     setCurrentOpened(null);
   };
 
-  const [currentOpened, setCurrentOpened] = useState(null);
-
   return (
     <>
       <div className="popup__wrapper">
@@ -68,7 +67,6 @@ export default function Popup({ setIsShowPopup }) {
               setDateData={setDateData}
               currentOpened={currentOpened}
               setCurrentOpened={setCurrentOpened}
-              periodSelected={beginDate}
             />
             <Time
               type="hour"
@@ -97,7 +95,6 @@ export default function Popup({ setIsShowPopup }) {
               setDateData={setDateData}
               currentOpened={currentOpened}
               setCurrentOpened={setCurrentOpened}
-              periodSelected={endDate}
             />
             <Time
               type="hour"

@@ -45,6 +45,18 @@ export default function Time({ type, id, currentOpened, setCurrentOpened, setTim
   const [, setCurrentValue] = useState(periodSelected);
 
   /**
+   * 시간 선택 클릭 시 options 노출 제어
+   * @param {string} id
+   */
+  const handleClickTime = (id) => {
+    if (currentOpened !== id) {
+      setCurrentOpened(id);
+    } else {
+      setCurrentOpened(null);
+    }
+  };
+
+  /**
    * 옵션 클릭 시 이벤트
    * @param {object<name:string, value:number>} optVal
    */
@@ -55,18 +67,6 @@ export default function Time({ type, id, currentOpened, setCurrentOpened, setTim
     setTimeData((prevData) => ({ ...prevData, [id]: option.value }));
 
     setCurrentOpened(null);
-  };
-
-  /**
-   * 시간 선택 클릭 시 이벤트
-   * @param {string} id
-   */
-  const handleClickTime = (id) => {
-    if (currentOpened !== id) {
-      setCurrentOpened(id);
-    } else {
-      setCurrentOpened(null);
-    }
   };
 
   return (

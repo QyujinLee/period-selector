@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
-export default function Calendar({ id, dateData, setDateData, currentOpened, setCurrentOpened, periodSelected }) {
+export default function Calendar({ id, dateData, setDateData, currentOpened, setCurrentOpened }) {
   // 달력에서 현재 선택된 월
   const [currentDate, setCurrentDate] = useState(new Date());
   // 달력 렌더링 데이터
@@ -14,52 +14,49 @@ export default function Calendar({ id, dateData, setDateData, currentOpened, set
    * 달력에서 날짜 선택 시 이벤트
    * @param {*} newSelected
    */
-  const handleClickSelectDate = (newSelected) => {
-    let newDate = newSelected;
-    let startDate = new Date(beginDate);
-    let finishDate = new Date(endDate);
+  const handleClickSelectDate = useCallback(
+    (newSelected) => {
+      let newDate = newSelected;
+      let startDate = new Date(beginDate);
+      let finishDate = new Date(endDate);
 
-    newDate.setHours(0, 0, 0, 0);
-    startDate.setHours(0, 0, 0, 0);
-    finishDate.setHours(0, 0, 0, 0);
+      newDate.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
+      finishDate.setHours(0, 0, 0, 0);
 
-    newDate = newDate.getTime();
-    startDate = startDate.getTime();
-    finishDate = finishDate.getTime();
+      newDate = newDate.getTime();
+      startDate = startDate.getTime();
+      finishDate = finishDate.getTime();
 
-    if (startDate === finishDate) {
-      if (id === 'beginDate') {
+      if (startDate === finishDate) {
         if (newDate < startDate) {
+          // 선택된 데이터가 현재 응시시작일 보다 이전인 경우, 응시시작일을 변경 한다
           setDateData((prevData) => ({ ...prevData, beginDate: newSelected.toISOString() }));
-        } else {
-          setDateData({ beginDate: newSelected.toISOString(), endDate: newSelected.toISOString() });
+        }
+
+        if (finishDate < newDate) {
+          // 선택된 데이터가 현재 응시마감일 보다 이후인 경우, 응시마감일을 변경 한다
+          setDateData((prevData) => ({ ...prevData, endDate: newSelected.toISOString() }));
         }
       }
 
-      if (id === 'endDate') {
-        if (endDate < newDate) {
+      if (startDate !== finishDate) {
+        if (startDate <= newDate && newDate <= finishDate) {
           setDateData((prevData) => ({ ...prevData, endDate: newSelected.toISOString() }));
         } else {
           setDateData({ beginDate: newSelected.toISOString(), endDate: newSelected.toISOString() });
         }
       }
-    }
 
-    if (startDate !== finishDate) {
-      if (startDate <= newDate && newDate <= finishDate) {
-        setDateData((prevData) => ({ ...prevData, endDate: newSelected.toISOString() }));
-      } else {
-        setDateData({ beginDate: newSelected.toISOString(), endDate: newSelected.toISOString() });
-      }
-    }
-
-    setCurrentOpened(null);
-  };
+      setCurrentOpened(null);
+    },
+    [beginDate, endDate, setCurrentOpened, setDateData]
+  );
 
   /**
    * 달력 그리기
    */
-  const renderCalendar = () => {
+  const renderCalendar = useCallback(() => {
     const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
     const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
     const prevMonthLastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
@@ -140,7 +137,7 @@ export default function Calendar({ id, dateData, setDateData, currentOpened, set
     });
 
     setCalendarData(rows);
-  };
+  }, [currentDate, beginDate, endDate, handleClickSelectDate]);
 
   /**
    * 이전 달로 이동
@@ -156,12 +153,8 @@ export default function Calendar({ id, dateData, setDateData, currentOpened, set
     setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
   };
 
-  useEffect(() => {
-    renderCalendar();
-  }, [currentDate, beginDate, endDate]);
-
   /**
-   * 날짜 선택 클릭 시 이벤트
+   * 날짜 선택 클릭 시 달력 노출 제어
    * @param {string} id
    */
   const handleClickOpenCalendar = (id) => {
@@ -171,6 +164,10 @@ export default function Calendar({ id, dateData, setDateData, currentOpened, set
       setCurrentOpened(null);
     }
   };
+
+  useEffect(() => {
+    renderCalendar();
+  }, [renderCalendar]);
 
   return (
     <div className="calendar__wrapper">
