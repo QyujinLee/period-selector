@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setPeriodDate, setPeriodTime } from '../../reducers/periodReducer';
+import { setPeriod } from '../../reducers/periodReducer';
 import Calendar from './item/Calendar';
 import Time from './item/Time';
 
@@ -19,10 +19,14 @@ export default function Popup({ setIsShowPopup }) {
    * 확인 버튼 클릭
    */
   const handleClickCheck = () => {
-    dispatch(setPeriodDate({ type: 'beginDate', value: dateData.beginDate }));
-    dispatch(setPeriodDate({ type: 'endDate', value: dateData.endDate }));
-    dispatch(setPeriodTime({ type: 'beginTime', hour: timeData.beginHour, minute: timeData.beginMinute }));
-    dispatch(setPeriodTime({ type: 'endTime', hour: timeData.endHour, minute: timeData.endMinute }));
+    dispatch(
+      setPeriod({
+        beginDate: dateData.beginDate,
+        endDate: dateData.endDate,
+        beginTime: `${timeData.beginHour}:${timeData.beginMinute}`,
+        endTime: `${timeData.endHour}:${timeData.endMinute}`,
+      })
+    );
     setIsShowPopup(false);
   };
 

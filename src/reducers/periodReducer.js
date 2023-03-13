@@ -17,10 +17,17 @@ export const periodSlice = createSlice({
       const { type, hour, minute } = action.payload;
       state[type] = `${hour}:${minute}`;
     },
+    setPeriod: (state, action) => {
+      const { beginDate, endDate, beginTime, endTime } = action.payload;
+      state.beginDate = beginDate;
+      state.endDate = endDate;
+      state.beginTime = beginTime;
+      state.endTime = endTime;
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setPeriodDate, setPeriodTime } = periodSlice.actions;
+export const { setPeriodDate, setPeriodTime, setPeriod } = periodSlice.actions;
 
 export default periodSlice.reducer;

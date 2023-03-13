@@ -52,7 +52,7 @@ export default function Time({ type, id, currentOpened, setCurrentOpened, timeDa
     setCurrentName(option.name);
     setCurrentValue(option.value);
 
-    setTimeData({ ...timeData, [id]: option.value });
+    setTimeData((prevData) => ({ ...prevData, [id]: option.value }));
 
     setCurrentOpened(null);
   };

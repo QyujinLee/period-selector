@@ -14,7 +14,7 @@ export default function Calendar({ id, currentOpened, setCurrentOpened, periodSe
   const handleClickSelectDate = (newSelected) => {
     if (selectedDate !== newSelected) {
       setSelectedDate(newSelected);
-      setDateData({ ...dateData, [id]: newSelected.toISOString() });
+      setDateData((prevData) => ({ ...prevData, [id]: newSelected.toISOString() }));
     }
     setCurrentOpened(null);
   };
